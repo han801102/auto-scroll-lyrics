@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="array_lyrics">
+		<item>Not Your Kind People</item>
+		<item></item>
+		<item>We are not your kind of people.</item>
+		<item>You seem kind of phoney.</item>
+		<item>Everything\'s a lie.</item>
+		<item>We are not your kind of people.</item>
+		<item>Something in your makeup.</item>
+		<item>Don\'t see eye to eye.</item>
+		<item></item>
+		<item>We are not your kind of people.</item>
+		<item>Don\'t want to be like you.</item>
+		<item>Ever in our lives.</item>
+		<item>We are not your kind of people.</item>
+		<item>We fight when you start talking.</item>
+		<item>There\'s nothing but white noise</item>
+		<item></item>
+		<item>Ahhh.... Ahhh.... Ahhh.... Ahhh....</item>
+		<item></item>
+		<item>Running around trying to fit in,</item>
+		<item>Wanting to be loved.</item>
+		<item>It doesn\'t take much.</item>
+		<item>For someone to shut you down.</item>
+		<item>When you build a shell,</item>
+		<item></item>
+		<item>Build an army in your mind.</item>
+		<item>You can\'t sit still.</item>
+		<item>And you don\'t like hanging round the crowd.</item>
+		<item>They don\'t understand</item>
+		<item></item>
+		<item>You dropped by as I was sleeping.</item>
+		<item>You came to see the whole commotion.</item>
+		<item>And when I woke I started laughing.</item>
+		<item>The jokes on me for not believing.</item>
+		<item></item>
+		<item>We are not your kind of people.</item>
+		<item>Speak a different language.</item>
+		<item>We see through your lies.</item>
+		<item>We are not your kind of people.</item>
+		<item>Won\'t be cast as demons,</item>
+		<item>Creatures you despise.</item>
+		<item></item>
+		<item>We are extraordinary people.</item>
+		<item>We are extraordinary people.</item>
+		<item>We are extraordinary people.</item>
+		<item>We are extraordinary people.</item>
+	</string-array>
+
+	<string-array name="array_start_time">
+		<item>00:00</item>
+
+		<item>00:00</item>
+
+		<item>00:16</item>
+		<item>00:23</item>
+		<item>00:27</item>
+		<item>00:33</item>
+		<item>00:39</item>
+		<item>00:43</item>
+
+		<item>00:00</item>
+
+		<item>00:49</item>
+		<item>00:55</item>
+		<item>00:59</item>
+		<item>01:05</item>
+		<item>01:11</item>
+		<item>01:15</item>
+
+		<item>00:00</item>
+
+		<item>01:21</item>
+
+		<item>00:00</item>
+
+		<item>02:23</item>
+		<item>02:26</item>
+		<item>02:30</item>
+		<item>02:34</item>
+		<item>02:39</item>
+
+		<item>00:00</item>
+
+		<item>02:41</item>
+		<item>02:43</item>
+		<item>02:45</item>
+		<item>02:50</item>
+
+		<item>00:00</item>
+
+		<item>02:55</item>
+		<item>03:03</item>
+		<item>03:10</item>
+		<item>03:18</item>
+
+		<item>00:00</item>
+
+		<item>03:25</item>
+		<item>03:31</item>
+		<item>03:35</item>
+		<item>03:41</item>
+		<item>03:47</item>
+		<item>03:50</item>
+
+		<item>00:00</item>
+
+		<item>03:56</item>
+		<item>04:03</item>
+		<item>04:11</item>
+		<item>04:19</item>
+	</string-array>
+
+
+	<string-array name="array_end_time">
+		<item>00:00</item>
+
+		<item>00:00</item>
+
+		<item>00:22</item>
+		<item>00:26</item>
+		<item>00:31</item>
+		<item>00:38</item>
+		<item>00:42</item>
+		<item>00:46</item>
+
+		<item>00:00</item>
+
+		<item>00:54</item>
+		<item>00:58</item>
+		<item>01:03</item>
+		<item>01:10</item>
+		<item>01:14</item>
+		<item>01:19</item>
+
+		<item>00:00</item>
+
+		<item>01:52</item>
+
+		<item>00:00</item>
+
+		<item>02:25</item>
+		<item>02:29</item>
+		<item>02:33</item>
+		<item>02:38</item>
+		<item>02:40</item>
+
+		<item>00:00</item>
+
+		<item>02:42</item>
+		<item>02:44</item>
+		<item>02:47</item>
+		<item>02:52</item>
+
+		<item>00:00</item>
+
+		<item>03:02</item>
+		<item>03:09</item>
+		<item>03:17</item>
+		<item>03:24</item>
+
+		<item>00:00</item>
+
+		<item>03:30</item>
+		<item>03:34</item>
+		<item>03:40</item>
+		<item>03:46</item>
+		<item>03:49</item>
+		<item>03:55</item>
+
+		<item>00:00</item>
+
+		<item>04:02</item>
+		<item>04:10</item>
+		<item>04:18</item>
+		<item>04:26</item>
+	</string-array>
+
+</resources>

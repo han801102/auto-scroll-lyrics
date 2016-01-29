@@ -2,7 +2,6 @@ package practice.hanchen.autoscrolllyrics;
 
 import android.media.MediaPlayer;
 import android.util.Log;
-import android.widget.BaseAdapter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,7 +30,6 @@ public class LyricsManager {
 	private int absFirstLyricsChildPosition;
 	private int centerPosition;
 
-
 	public LyricsManager() {
 		lyrics = new ArrayList<String>();
 		startTimes = new ArrayList<Integer>();
@@ -42,41 +40,46 @@ public class LyricsManager {
 		return lyrics;
 	}
 
-	public int getCurrentLyricsPosition(){
+	public int getCurrentLyricsPosition() {
 		return currentLyricsPosition;
 	}
 
-	public void setCurrentLyricsPosition(int currentLyricsPosition){
+	public void setCurrentLyricsPosition(int currentLyricsPosition) {
 		this.currentLyricsPosition = currentLyricsPosition;
 	}
 
-	public int getAbsFirstLyricsChildPosition(){
+	public int getAbsFirstLyricsChildPosition() {
 		return absFirstLyricsChildPosition;
 	}
 
-	public void setAbsFirstLyricsChildPosition(int absFirstLyricsChildPosition){
+	public void setAbsFirstLyricsChildPosition(int absFirstLyricsChildPosition) {
 		this.absFirstLyricsChildPosition = absFirstLyricsChildPosition;
 	}
 
-	public int getCenterPosition(){
+	public int getCenterPosition() {
 		return centerPosition;
 	}
 
-	public void setCenterPosition(int centerPosition){
+	public void setCenterPosition(int centerPosition) {
 		this.centerPosition = centerPosition;
 	}
 
-	public void addCurrentLyricsPosition(){
+	public void addCurrentLyricsPosition() {
 		this.currentLyricsPosition++;
 	}
 
-	public void addAbsFirstLyricsChildPosition(){
+	public void addAbsFirstLyricsChildPosition() {
 		this.absFirstLyricsChildPosition++;
+	}
+
+	public long getStartTimeFromLyrics(int position) {
+		return TimeUnit.SECONDS.toMillis(startTimes.get(position));
 	}
 
 	public void parseLyricsAndTime(InputStream inputStream) {
 		String stringFromXML;
 		int timeInSecond;
+		int debugNo = 0;
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -94,7 +97,7 @@ public class LyricsManager {
 				}
 				switch (parentNode.getAttribute("name")) {
 					case "array_lyrics":
-						lyrics.add(stringFromXML);
+						lyrics.add("[" +Integer.toString(i) + "]" + stringFromXML);
 						break;
 					case "array_start_time":
 						timeInSecond = Integer.parseInt(stringFromXML.split(":")[0]) * 60 + Integer.parseInt(stringFromXML.split(":")[1]);

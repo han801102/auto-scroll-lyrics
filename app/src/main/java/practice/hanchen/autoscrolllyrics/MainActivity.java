@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,7 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-	static final String LOG_TAG = "MainActivity";
+	private static final String LOG_TAG = "MainActivity";
 	private LyricsManager lyricsManager;
 	private MediaPlayer mediaPlayer;
 	private ListView listViewLyrics;
@@ -47,6 +48,19 @@ public class MainActivity extends AppCompatActivity {
 		lyricsAdapter = new LyricsAdapter(getApplicationContext(), lyricsManager);
 		listViewLyrics = (ListView) findViewById(R.id.listview_lyrics);
 		listViewLyrics.setAdapter(lyricsAdapter);
+		listViewLyrics.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if (lyricsManager.getCurrentLyricsPosition() < listViewLyrics.getLastVisiblePosition() || lyricsManager
+						.getCurrentLyricsPosition() > listViewLyrics.getFirstVisiblePosition()) {
+					changeColor(lyricsManager.getCurrentLyricsPosition(), Color.BLACK);
+				}
+				changeColor(position - listViewLyrics.getFirstVisiblePosition(), Color.BLUE);
+				lyricsManager.setCurrentLyricsPosition(position - listViewLyrics.getFirstVisiblePosition());
+				lyricsManager.setAbsFirstLyricsChildPosition(listViewLyrics.getFirstVisiblePosition());
+				mediaPlayer.seekTo((int) lyricsManager.getStartTimeFromLyrics(position));
+			}
+		});
 
 		playSongAndSyncLyrics();
 	}
@@ -74,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void playSongAndSyncLyrics() {
-		Log.d(LOG_TAG, "start");
 		lyricsManager.setAbsFirstLyricsChildPosition(0);
 		lyricsManager.setCurrentLyricsPosition(1);
 		if (mediaPlayer == null) {
@@ -86,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		if (!mediaPlayer.isPlaying()) {
-			//listViewLyrics.setSelection(0);
+			listViewLyrics.setSelection(0);
 			mediaPlayer.start();
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
@@ -135,19 +148,20 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void changeLine(int position) {
+		if (position > 0) {
+			changeColor(position - 1, Color.BLACK);
+		}
+
+		if (position < listViewLyrics.getChildCount()) {
+			changeColor(position, Color.BLUE);
+		}
+	}
+
+	private void changeColor(int position, int color) {
 		View viewLyrics;
 		TextView labelLyrics;
-
-		if (position > 0) {
-			viewLyrics = listViewLyrics.getChildAt(position - 1);
-			labelLyrics = (TextView) viewLyrics.findViewById(R.id.label_lyrics);
-			labelLyrics.setTextColor(Color.BLACK);
-		}
-
-		if (position < listViewLyrics.getChildCount() - 1) {
-			viewLyrics = listViewLyrics.getChildAt(position);
-			labelLyrics = (TextView) viewLyrics.findViewById(R.id.label_lyrics);
-			labelLyrics.setTextColor(Color.BLUE);
-		}
+		viewLyrics = listViewLyrics.getChildAt(position);
+		labelLyrics = (TextView) viewLyrics.findViewById(R.id.label_lyrics);
+		labelLyrics.setTextColor(color);
 	}
 }

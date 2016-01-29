@@ -77,15 +77,21 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void playSongAndSyncLyrics() {
-		if (timer == null) {
+		if (mediaPlayer == null) {
 			mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.notyourkindpeople);
 			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-			if (mediaPlayer != null) {
-				absFirstLyricsChildPosition = 0;
-				mediaPlayer.start();
-				timer = new Timer();
-				timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
-			}
+			mediaPlayer.start();
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
+		}
+
+		if(!mediaPlayer.isPlaying()) {
+			absFirstLyricsChildPosition = 0;
+			currentLyricsPosition = 0;
+			listViewLyrics.setSelection(0);
+			mediaPlayer.start();
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
 		}
 	}
 
@@ -118,8 +124,7 @@ public class MainActivity extends AppCompatActivity {
 							}
 						}
 					} else {
-						timer.cancel();
-						timer.purge();
+						playSongAndSyncLyrics();
 					}
 				}
 			});

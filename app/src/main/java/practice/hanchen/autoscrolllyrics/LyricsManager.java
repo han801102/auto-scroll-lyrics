@@ -2,6 +2,7 @@ package practice.hanchen.autoscrolllyrics;
 
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.widget.BaseAdapter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,6 +27,10 @@ public class LyricsManager {
 	private ArrayList<Integer> startTimes;
 	private ArrayList<Integer> endTimes;
 	private ArrayList<String> lyrics;
+	private int currentLyricsPosition;
+	private int absFirstLyricsChildPosition;
+	private int centerPosition;
+
 
 	public LyricsManager() {
 		lyrics = new ArrayList<String>();
@@ -35,6 +40,38 @@ public class LyricsManager {
 
 	public ArrayList<String> getLyrics() {
 		return lyrics;
+	}
+
+	public int getCurrentLyricsPosition(){
+		return currentLyricsPosition;
+	}
+
+	public void setCurrentLyricsPosition(int currentLyricsPosition){
+		this.currentLyricsPosition = currentLyricsPosition;
+	}
+
+	public int getAbsFirstLyricsChildPosition(){
+		return absFirstLyricsChildPosition;
+	}
+
+	public void setAbsFirstLyricsChildPosition(int absFirstLyricsChildPosition){
+		this.absFirstLyricsChildPosition = absFirstLyricsChildPosition;
+	}
+
+	public int getCenterPosition(){
+		return centerPosition;
+	}
+
+	public void setCenterPosition(int centerPosition){
+		this.centerPosition = centerPosition;
+	}
+
+	public void addCurrentLyricsPosition(){
+		this.currentLyricsPosition++;
+	}
+
+	public void addAbsFirstLyricsChildPosition(){
+		this.absFirstLyricsChildPosition++;
 	}
 
 	public void parseLyricsAndTime(InputStream inputStream) {
@@ -79,15 +116,16 @@ public class LyricsManager {
 
 	}
 
-	public boolean shouldChangeLine(MediaPlayer mediaPlayer, int currentLyricsPosition) {
-		if (currentLyricsPosition >= lyrics.size()) {
+	public boolean shouldChangeLine(MediaPlayer mediaPlayer) {
+		int lyricsPosition = currentLyricsPosition + absFirstLyricsChildPosition;
+		if (lyricsPosition >= lyrics.size()) {
 			return false;
 		}
 
 		long musicTimestamp = TimeUnit.MILLISECONDS.toSeconds(mediaPlayer.getCurrentPosition());
-		if (musicTimestamp > endTimes.get(currentLyricsPosition)) {
-			if (endTimes.get(currentLyricsPosition) == 0) {
-				if (musicTimestamp > startTimes.get(currentLyricsPosition + 1)) {
+		if (musicTimestamp > endTimes.get(lyricsPosition)) {
+			if (endTimes.get(lyricsPosition) == 0) {
+				if (musicTimestamp > startTimes.get(lyricsPosition + 1)) {
 					return true;
 				} else {
 					return false;

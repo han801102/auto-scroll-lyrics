@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,9 +25,7 @@ public class MainActivity extends AppCompatActivity {
 	private MediaPlayer mediaPlayer;
 	private ListView listViewLyrics;
 	private Timer timer;
-	private int currentLyricsPosition;
-	private int absFirstLyricsChildPosition;
-	private int centerPosition;
+	private LyricsAdapter lyricsAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 		}
 
-		ArrayAdapter<String> lyricsAdatper =
-				new ArrayAdapter<String>(this, R.layout.layout_lyrics_line, R.id.label_lyrics, lyricsManager.getLyrics());
+		lyricsAdapter = new LyricsAdapter(getApplicationContext(), lyricsManager);
 		listViewLyrics = (ListView) findViewById(R.id.listview_lyrics);
-		listViewLyrics.setAdapter(lyricsAdatper);
+		listViewLyrics.setAdapter(lyricsAdapter);
+
 		playSongAndSyncLyrics();
 	}
 
@@ -77,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void playSongAndSyncLyrics() {
+		Log.d(LOG_TAG, "start");
+		lyricsManager.setAbsFirstLyricsChildPosition(0);
+		lyricsManager.setCurrentLyricsPosition(1);
 		if (mediaPlayer == null) {
 			mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.notyourkindpeople);
 			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -85,10 +85,8 @@ public class MainActivity extends AppCompatActivity {
 			timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
 		}
 
-		if(!mediaPlayer.isPlaying()) {
-			absFirstLyricsChildPosition = 0;
-			currentLyricsPosition = 0;
-			listViewLyrics.setSelection(0);
+		if (!mediaPlayer.isPlaying()) {
+			//listViewLyrics.setSelection(0);
 			mediaPlayer.start();
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
@@ -102,27 +100,32 @@ public class MainActivity extends AppCompatActivity {
 				@Override
 				public void run() {
 					if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-						if (lyricsManager.shouldChangeLine(mediaPlayer, currentLyricsPosition + absFirstLyricsChildPosition)) {
-							if (listViewLyrics.getChildCount() > 0) {
-								if (centerPosition == 0) {
-									centerPosition = listViewLyrics.getChildCount() / 2;
-								}
-
-								if (currentLyricsPosition + 1 >= centerPosition) {
-									if (listViewLyrics.getLastVisiblePosition() == listViewLyrics.getCount() - 1) {
-										currentLyricsPosition++;
-										changeLine(currentLyricsPosition);
-									} else {
-										absFirstLyricsChildPosition++;
-										changeLine(currentLyricsPosition + 1);
-										listViewLyrics.setSelection(absFirstLyricsChildPosition);
+						if (lyricsManager.shouldChangeLine(mediaPlayer)) {
+							if (listViewLyrics.getFirstVisiblePosition() != lyricsManager.getAbsFirstLyricsChildPosition()) {
+								listViewLyrics.setSelection(lyricsManager.getAbsFirstLyricsChildPosition());
+							} else {
+								if (listViewLyrics.getChildCount() > 0) {
+									if (lyricsManager.getCenterPosition() == 0) {
+										lyricsManager.setCenterPosition(listViewLyrics.getChildCount() / 2);
 									}
-								} else {
-									currentLyricsPosition++;
-									changeLine(currentLyricsPosition);
+
+									if (lyricsManager.getCurrentLyricsPosition() + 1 >= lyricsManager.getCenterPosition()) {
+										if (listViewLyrics.getLastVisiblePosition() == listViewLyrics.getCount() - 1) {
+											lyricsManager.addCurrentLyricsPosition();
+											changeLine(lyricsManager.getCurrentLyricsPosition());
+										} else {
+											lyricsManager.addAbsFirstLyricsChildPosition();
+											changeLine(lyricsManager.getCurrentLyricsPosition() + 1);
+											listViewLyrics.setSelection(lyricsManager.getAbsFirstLyricsChildPosition());
+										}
+									} else {
+										lyricsManager.addCurrentLyricsPosition();
+										changeLine(lyricsManager.getCurrentLyricsPosition());
+									}
 								}
 							}
 						}
+
 					} else {
 						playSongAndSyncLyrics();
 					}

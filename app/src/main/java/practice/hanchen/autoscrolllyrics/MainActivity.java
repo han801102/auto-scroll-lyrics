@@ -51,13 +51,11 @@ public class MainActivity extends AppCompatActivity {
 		listViewLyrics.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (lyricsManager.getCurrentLyricsPosition() < listViewLyrics.getLastVisiblePosition() || lyricsManager
-						.getCurrentLyricsPosition() > listViewLyrics.getFirstVisiblePosition()) {
-					changeColor(lyricsManager.getCurrentLyricsPosition(), Color.BLACK);
+				if (!isOutOfView(lyricsManager.getCurrentPlayPosition())) {
+					changeColor(lyricsManager.getCurrentPlayPosition() - listViewLyrics.getFirstVisiblePosition(), Color.BLACK);
 				}
 				changeColor(position - listViewLyrics.getFirstVisiblePosition(), Color.BLUE);
-				lyricsManager.setCurrentLyricsPosition(position - listViewLyrics.getFirstVisiblePosition());
-				lyricsManager.setAbsFirstLyricsChildPosition(listViewLyrics.getFirstVisiblePosition());
+				lyricsManager.setCurrentPlayPosition(position);
 				mediaPlayer.seekTo((int) lyricsManager.getStartTimeFromLyrics(position));
 			}
 		});
@@ -88,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void playSongAndSyncLyrics() {
-		lyricsManager.setAbsFirstLyricsChildPosition(0);
-		lyricsManager.setCurrentLyricsPosition(1);
 		if (mediaPlayer == null) {
 			mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.notyourkindpeople);
 			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -99,10 +95,9 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		if (!mediaPlayer.isPlaying()) {
+			lyricsManager.setCurrentPlayPosition(1);
 			listViewLyrics.setSelection(0);
 			mediaPlayer.start();
-			timer = new Timer();
-			timer.scheduleAtFixedRate(new MusicTimerTask(), 0, 300);
 		}
 	}
 
@@ -114,29 +109,7 @@ public class MainActivity extends AppCompatActivity {
 				public void run() {
 					if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 						if (lyricsManager.shouldChangeLine(mediaPlayer)) {
-							if (listViewLyrics.getFirstVisiblePosition() != lyricsManager.getAbsFirstLyricsChildPosition()) {
-								listViewLyrics.setSelection(lyricsManager.getAbsFirstLyricsChildPosition());
-							} else {
-								if (listViewLyrics.getChildCount() > 0) {
-									if (lyricsManager.getCenterPosition() == 0) {
-										lyricsManager.setCenterPosition(listViewLyrics.getChildCount() / 2);
-									}
-
-									if (lyricsManager.getCurrentLyricsPosition() + 1 >= lyricsManager.getCenterPosition()) {
-										if (listViewLyrics.getLastVisiblePosition() == listViewLyrics.getCount() - 1) {
-											lyricsManager.addCurrentLyricsPosition();
-											changeLine(lyricsManager.getCurrentLyricsPosition());
-										} else {
-											lyricsManager.addAbsFirstLyricsChildPosition();
-											changeLine(lyricsManager.getCurrentLyricsPosition() + 1);
-											listViewLyrics.setSelection(lyricsManager.getAbsFirstLyricsChildPosition());
-										}
-									} else {
-										lyricsManager.addCurrentLyricsPosition();
-										changeLine(lyricsManager.getCurrentLyricsPosition());
-									}
-								}
-							}
+							changeLine();
 						}
 
 					} else {
@@ -147,21 +120,49 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	private void changeLine(int position) {
-		if (position > 0) {
-			changeColor(position - 1, Color.BLACK);
+	private void changeLine() {
+		if (lyricsManager.getCenterPosition() == 0) {
+			lyricsManager.setCenterPosition(listViewLyrics.getChildCount() / 2);
 		}
 
-		if (position < listViewLyrics.getChildCount()) {
-			changeColor(position, Color.BLUE);
+		if (isOutOfView(lyricsManager.getCurrentPlayPosition())) {
+			int firstPosition = lyricsManager.getCurrentPlayPosition() - lyricsManager.getCenterPosition();
+			if (firstPosition < 0) {
+				firstPosition = 0;
+			}
+			listViewLyrics.setSelection(firstPosition);
+		} else {
+			lyricsManager.setCurrentPlayPosition(lyricsManager.getCurrentPlayPosition() + 1);
+			int currentPositionInView = lyricsManager.getCurrentPlayPosition() - listViewLyrics.getFirstVisiblePosition();
+			if (currentPositionInView >= lyricsManager.getCenterPosition()) {
+				changeColor(currentPositionInView, Color.BLUE);
+				changeColor(currentPositionInView - 1, Color.BLACK);
+				listViewLyrics.setSelection(lyricsManager.getCurrentPlayPosition() - lyricsManager.getCenterPosition());
+			} else {
+				changeColor(currentPositionInView, Color.BLUE);
+				changeColor(currentPositionInView - 1, Color.BLACK);
+			}
+		}
+	}
+
+	private boolean isOutOfView(int position) {
+		if (position < listViewLyrics.getFirstVisiblePosition()) {
+			return true;
+		} else if (position > listViewLyrics.getLastVisiblePosition()) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	private void changeColor(int position, int color) {
-		View viewLyrics;
-		TextView labelLyrics;
-		viewLyrics = listViewLyrics.getChildAt(position);
-		labelLyrics = (TextView) viewLyrics.findViewById(R.id.label_lyrics);
-		labelLyrics.setTextColor(color);
+		if (position <= listViewLyrics.getLastVisiblePosition() - listViewLyrics.getFirstVisiblePosition()) {
+			View viewLyrics;
+			TextView labelLyrics;
+			viewLyrics = listViewLyrics.getChildAt(position);
+			labelLyrics = (TextView) viewLyrics.findViewById(R.id.label_lyrics);
+			labelLyrics.setTextColor(color);
+
+		}
 	}
 }

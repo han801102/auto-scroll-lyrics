@@ -55,7 +55,7 @@ public class LyricsAdapter extends BaseAdapter {
 		}
 
 		holder.textView.setText(lyricsManager.getLyrics().get(position));
-		if (position == lyricsManager.getCurrentLyricsPosition() + lyricsManager.getAbsFirstLyricsChildPosition()) {
+		if (position == lyricsManager.getCurrentPlayPosition()) {
 			holder.textView.setTextColor(Color.BLUE);
 		} else if (position == 0) {
 			holder.textView.setTextColor(Color.RED);

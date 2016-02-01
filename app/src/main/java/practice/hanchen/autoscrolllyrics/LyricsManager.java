@@ -26,34 +26,26 @@ public class LyricsManager {
 	private ArrayList<Integer> startTimes;
 	private ArrayList<Integer> endTimes;
 	private ArrayList<String> lyrics;
-	private int currentLyricsPosition;
-	private int absFirstLyricsChildPosition;
+	private int currentPlayPosition;
 	private int centerPosition;
 
 	public LyricsManager() {
 		lyrics = new ArrayList<String>();
 		startTimes = new ArrayList<Integer>();
 		endTimes = new ArrayList<Integer>();
+		currentPlayPosition = 1;
 	}
 
 	public ArrayList<String> getLyrics() {
 		return lyrics;
 	}
 
-	public int getCurrentLyricsPosition() {
-		return currentLyricsPosition;
+	public int getCurrentPlayPosition() {
+		return currentPlayPosition;
 	}
 
-	public void setCurrentLyricsPosition(int currentLyricsPosition) {
-		this.currentLyricsPosition = currentLyricsPosition;
-	}
-
-	public int getAbsFirstLyricsChildPosition() {
-		return absFirstLyricsChildPosition;
-	}
-
-	public void setAbsFirstLyricsChildPosition(int absFirstLyricsChildPosition) {
-		this.absFirstLyricsChildPosition = absFirstLyricsChildPosition;
+	public void setCurrentPlayPosition(int currentPlayPosition) {
+		this.currentPlayPosition = currentPlayPosition;
 	}
 
 	public int getCenterPosition() {
@@ -64,14 +56,6 @@ public class LyricsManager {
 		this.centerPosition = centerPosition;
 	}
 
-	public void addCurrentLyricsPosition() {
-		this.currentLyricsPosition++;
-	}
-
-	public void addAbsFirstLyricsChildPosition() {
-		this.absFirstLyricsChildPosition++;
-	}
-
 	public long getStartTimeFromLyrics(int position) {
 		return TimeUnit.SECONDS.toMillis(startTimes.get(position));
 	}
@@ -79,7 +63,6 @@ public class LyricsManager {
 	public void parseLyricsAndTime(InputStream inputStream) {
 		String stringFromXML;
 		int timeInSecond;
-		int debugNo = 0;
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -97,7 +80,7 @@ public class LyricsManager {
 				}
 				switch (parentNode.getAttribute("name")) {
 					case "array_lyrics":
-						lyrics.add("[" +Integer.toString(i) + "]" + stringFromXML);
+						lyrics.add(stringFromXML);
 						break;
 					case "array_start_time":
 						timeInSecond = Integer.parseInt(stringFromXML.split(":")[0]) * 60 + Integer.parseInt(stringFromXML.split(":")[1]);
@@ -120,15 +103,14 @@ public class LyricsManager {
 	}
 
 	public boolean shouldChangeLine(MediaPlayer mediaPlayer) {
-		int lyricsPosition = currentLyricsPosition + absFirstLyricsChildPosition;
-		if (lyricsPosition >= lyrics.size()) {
+		if (currentPlayPosition >= lyrics.size()) {
 			return false;
 		}
 
 		long musicTimestamp = TimeUnit.MILLISECONDS.toSeconds(mediaPlayer.getCurrentPosition());
-		if (musicTimestamp > endTimes.get(lyricsPosition)) {
-			if (endTimes.get(lyricsPosition) == 0) {
-				if (musicTimestamp > startTimes.get(lyricsPosition + 1)) {
+		if (musicTimestamp > endTimes.get(currentPlayPosition)) {
+			if (endTimes.get(currentPlayPosition) == 0) {
+				if (musicTimestamp >= startTimes.get(currentPlayPosition + 1)) {
 					return true;
 				} else {
 					return false;
